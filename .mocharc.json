@@ -1,0 +1,9 @@
+{
+    "reporter": "spec",
+    "spec": "./out/**/*.test.js",
+    "require": [
+        "reflect-metadata"
+    ],
+    "timeout": 5000,
+    "slow": 100
+}
