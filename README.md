@@ -1,77 +1,34 @@
-Hi there! 👋
+## Challenge: soft delete
 
-We are excited about you considering to join our small team of dedicated engineers.
+#### Requirements:
+- When deleting a task, perform a "soft delete" instead of an "hard delete"
+- Deleted tasks should not show in the GET /tasks endpoint
+- Deleted taks should still be accessible via GET /tasks/{taskId} endpoint
 
-This repo contains a small HTTP-based microservice built using [Node Framework](https://github.com/ubio/node-framework) (our framework for building back-end applications). We at [Ubio](https://ub.io) use this repo as a basis for technical challenges for software engineering positions.
+#### Approach
 
-The remaining of README describes the service itself. Please proceed to [Challenges](CHALLENGES.md) for the assignments and our expectations.
+##### DELETE /tasks/{taskId} endpoint changes
 
-# Task Service
+My approach was adding a new field to the Task schema named `deletedAt`, that would be the date when the task was deleted.
 
-This application is a simple task manager. It allows clients to create, find, list, complete and delete tasks. It is developed using our default code structure and design practices.
+    export type Task = {
+        id: string;
+        title: string;
+        description?: string;
+        isCompleted: boolean;
+        deletedAt?: string;
+    };
 
-## Endpoints
+This way when a task is asked to be deleted the field will be filled with the current date.
 
-### GET /tasks/{taskId}
+###### Corner case:
+*What should happen when the task asked to be deleted was already deleted?*
+- My approach was understanding that **if a task was previous deleted** (has the deletedAt field filled) i**t should be considered deleted as if it does not exists**.
+- When getting a task to be deleted we should only get the tasks that do not have the field deletedAt filled, and if we don't get a task to be deleted we should consider that the task does not exist.
 
-Finds and returns a task by specified `taskId`. If the task is not found, returns a 404 error.
+###### Other possible solutions:
+- Return an error if the task being deleted was already deleted
+- Don't delete and log the action of a task being deleted was already deleted, return that the task was deleted, withouth updating the deletedAt field
 
-```
-GET /tasks/{taskId}
-
-{
-    "id": "123",
-    "title": "Write some code",
-    "isCompleted": true,
-}
-```
-
-### GET /tasks
-
-Returns a list of all tasks.
-
-```
-GET /tasks
-
-[
-    {
-        "id": "123",
-        "title": "Write some code",
-        "isCompleted": true,
-    }
-]
-```
-
-### POST /tasks
-
-Creates a new task and returns its id.
-
-```
-POST /tasks { "title": "Write some code", "isCompleted": false }
-
-"123"
-```
-
-### PUT /tasks/{taskId}/complete
-
-Marks the task with the specified `taskId` as completed.
-Returns no content if successful.
-If the task is not found, returns a 404 error.
-
-```
-PUT /tasks/123/complete
-
-<no content>
-```
-
-### DELETE /tasks/{taskId}
-
-Deletes the task with specified `taskId`.
-Returns no content if successful.
-If the task is not found, returns a 404 error.
-
-```
-DELETE /tasks/123
-
-<no content>
-```
+##### GET /tasks endpoint changes
+- Added a filter in the repository to now show the deleted tasks
