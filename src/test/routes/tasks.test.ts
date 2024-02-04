@@ -1,5 +1,4 @@
 import assert from 'assert';
-import { randomUUID } from 'crypto';
 
 import { runtime } from '../runtime.js';
 
@@ -47,7 +46,7 @@ describe('GET /tasks', () => {
             id: '789',
             title: 'Oh no another task',
             isCompleted: true,
-            deletedAt: "2024-02-02T15:15:48.960Z"
+            deletedAt: '2024-02-02T15:15:48.960Z'
         });
     });
 
@@ -60,11 +59,11 @@ describe('GET /tasks', () => {
         assert.strictEqual(task1.id, '123');
         assert.strictEqual(task1.title, 'Write some code');
         assert.strictEqual(task1.isCompleted, true);
-    
+
         assert.strictEqual(task2.id, '456');
         assert.strictEqual(task2.title, 'Another task');
         assert.strictEqual(task2.isCompleted, false);
-    
+
         assert.strictEqual(body.length, 2);
     });
 
@@ -103,7 +102,7 @@ describe('PUT /tasks/{taskId}/complete', () => {
         const taskId = '123';
 
         const res = await runtime.fetch(`/tasks/${taskId}/complete`, {
-        method: 'PUT',
+            method: 'PUT',
         });
 
         assert.strictEqual(res.status, 200);
@@ -117,7 +116,7 @@ describe('PUT /tasks/{taskId}/complete', () => {
         const nonExistentTaskId = '456';
 
         const res = await runtime.fetch(`/tasks/${nonExistentTaskId}/complete`, {
-        method: 'PUT',
+            method: 'PUT',
         });
 
         assert.strictEqual(res.status, 404);
@@ -142,32 +141,32 @@ describe('DELETE /tasks/{taskId}', () => {
 
     it('deletes a task', async () => {
         const taskId = '123';
-    
+
         const res = await runtime.fetch(`/tasks/${taskId}`, {
-          method: 'DELETE',
+            method: 'DELETE',
         });
-    
+
         assert.strictEqual(res.status, 200);
-    
+
         const deletedTask = await runtime.taskRepository.getTask(taskId);
         assert.strictEqual(deletedTask!.deletedAt !== undefined, true);
     });
 
-    it('returns 404 if task does not exist', async() => {
+    it('returns 404 if task does not exist', async () => {
         const nonExistentTaskId = '789';
 
         const res = await runtime.fetch(`/tasks/${nonExistentTaskId}`, {
-        method: 'DELETE',
+            method: 'DELETE',
         });
 
         assert.strictEqual(res.status, 404);
     });
 
-    it('returns 404 if task does was already deleted', async() => {
+    it('returns 404 if task does was already deleted', async () => {
         const nonExistentTaskId = '456';
 
         const res = await runtime.fetch(`/tasks/${nonExistentTaskId}`, {
-        method: 'DELETE',
+            method: 'DELETE',
         });
 
         assert.strictEqual(res.status, 404);

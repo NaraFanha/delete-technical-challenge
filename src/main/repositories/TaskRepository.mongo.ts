@@ -1,6 +1,5 @@
 import { ClientError } from '@ubio/framework';
 import { dep } from 'mesh-ioc';
-import { Logger } from '@ubio/framework';
 
 import { MongoDb } from '../mongodb.js';
 import { Task, TaskSchema } from '../schema/TaskSchema.js';
